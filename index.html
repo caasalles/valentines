@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Surpresa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      color: black;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('data:image/svg+xml;utf8,<svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3 9.24 3 10.91 3.81 12 5.09 13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center center;
+      background-size: contain;
+      animation: fall 6s linear infinite;
+      opacity: 0.7;
+    }
+
+    .main-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .section {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .section.active {
+      display: flex;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    /* Input estilizado delicado */
+    #name-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 25px;
+      border: 2px solid #d6a0d8;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #7b3f9f;
+      background-color: #faf5fb;
+      box-shadow: 0 3px 6px rgba(123, 63, 159, 0.15);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #name-input::placeholder {
+      color: #bfa2d9;
+      font-style: italic;
+    }
+
+    #name-input:focus {
+      outline: none;
+      border-color: #7b3f9f;
+      box-shadow: 0 0 8px rgba(123, 63, 159, 0.5);
+    }
+
+    .input-group button {
+      background: none;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      color: #7b3f9f;
+    }
+
+    .input-group button:hover {
+      transform: scale(1.2);
+      border-radius: 8px;
+      color: #d6a0d8;
+    }
+
+    .pergunta {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 100%;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Botões das perguntas estilizados delicado */
+    .quiz-btn {
+      background: #f8e1f4;
+      border: 2px solid #d6a0d8;
+      color: #7b3f9f;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 12px 24px;
+      margin-top: 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(123, 63, 159, 0.3);
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 400px;
+      letter-spacing: 0.8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .quiz-btn:hover {
+      background: #d6a0d8;
+      color: #fff;
+      box-shadow: 0 6px 12px rgba(123, 63, 159, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .quiz-btn.correct {
+      border-color: #2ecc71;
+      color: #2ecc71;
+      background: #dff5e1;
+      box-shadow: none;
+    }
+
+    .quiz-btn.wrong {
+      border-color: #e74c3c;
+      color: #e74c3c;
+      background: #fdecea;
+      box-shadow: none;
+    }
+
+    .typing {
+      border-right: 2px solid;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 0.7s step-end infinite;
+      font-weight: bold;
+    }
+
+    /* Botão da surpresa - já delicado */
+    #show-surprise-btn {
+      background: #f8e1f4;
+      border: 2px solid #d6a0d8;
+      color: #7b3f9f;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 12px 28px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(123, 63, 159, 0.3);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+      margin-top: 1.5rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #show-surprise-btn:hover {
+      background: #d6a0d8;
+      color: #fff;
+      box-shadow: 0 6px 12px rgba(123, 63, 159, 0.5);
+      transform: translateY(-2px);
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: black; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10%); opacity: 0; }
+      100% { transform: translateY(110vh); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="hearts"></div>
+
+<main class="main-container">
+
+  <div id="name-box" class="section active">
+    <div class="input-group">
+      <input type="text" id="name-input" placeholder="Digite seu nome">
+      <button id="submit-name">✅</button>
+    </div>
+  </div>
+
+  <div id="message" class="section"></div>
+
+  <div id="quiz" class="section">
+    <div id="pergunta-container"></div>
+  </div>
+
+  <div id="surpresa-container" class="section">
+    <h2>PARABÉNS!!! VOCÊ DESBLOQUEOU A SURPRESA 💖</h2>
+    <button id="show-surprise-btn">Clique aqui e veja a surpresa</button>
+  </div>
+
+</main>
+
+<script>
+  const perguntas = [
+    { pergunta: "Qual a data do nosso primeiro encontro?", opcoes: ["11/11/2024", "26/12/2024", "15/11/2024"], correta: 2 },
+    { pergunta: "Quem falou 'eu te amo' primeiro?", opcoes: ["Carolina", "Bruna"], correta: 0 },
+    { pergunta: "Qual é a nossa música?", opcoes: ["Tão Bem", "Vício de Amor", "Sunshine"], correta: 2 },
+    { pergunta: "Qual nosso rolê preferido?", opcoes: ["Rolê Gastronomico", "Downtown", "Pastelzin na Feira"], correta: 0 },
+    { pergunta: "Qual apelido carinhoso você me deu primeiro?", opcoes: ["Vitorinha", "Bê", "Neném"], correta: 1 }
+  ];
+
+  const nameBox = document.getElementById('name-box');
+  const nameInput = document.getElementById('name-input');
+  const submitBtn = document.getElementById('submit-name');
+  const quiz = document.getElementById('quiz');
+  const perguntaContainer = document.getElementById('pergunta-container');
+  const surpresaContainer = document.getElementById('surpresa-container');
+  const showSurpriseBtn = document.getElementById('show-surprise-btn');
+  const message = document.getElementById('message');
+
+  let perguntaAtual = 0;
+  let perguntasEmbaralhadas = [];
+
+  submitBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    nameBox.classList.remove('active');
+    message.classList.add('active');
+
+    if (name.toLowerCase() === 'bruna' || name.toLowerCase() === 'bru') {
+      typingSequence([
+        "BRUNA?",
+        "HMM, ACHO QUE ENTENDI...",
+        "OLÁ, MY SUNSHINE ❤️",
+        "SEJA BEM VINDA!",
+        "VOCÊ PRECISA ACERTAR TODAS AS QUESTÕES", 
+        "PARA DESBLOQUEAR A SURPRESA :)",
+        "ESTÁ PREPARADA? BORA LÁ!"
+      ], iniciarQuiz);
+    } else {
+      message.innerHTML = `<b>OLÁ ${name.toUpperCase()}, DESCULPA MAS ESSA SURPRESA NÃO É PARA VOCÊ.</b>`;
+      setTimeout(() => window.location.reload(), 3000);
+    }
+  });
+
+  function typingSequence(messages, callback) {
+    let i = 0;
+    function next() {
+      if (i < messages.length) {
+        typingEffect(messages[i], () => {
+          setTimeout(() => {
+            message.innerHTML = '';
+            next();
+          }, 1000);
+        });
+        i++;
+      } else {
+        if (callback) callback();
+      }
+    }
+    next();
+  }
+
+  function typingEffect(text, callback) {
+    let i = 0;
+    message.innerHTML = `<span class="typing"></span>`;
+    const typingSpan = message.querySelector('.typing');
+
+    const interval = setInterval(() => {
+      typingSpan.textContent = text.slice(0, i + 1);
+      i++;
+      if (i === text.length) {
+        clearInterval(interval);
+        if (callback) callback();
+      }
+    }, 80);
+  }
+
+  function iniciarQuiz() {
+    message.classList.remove('active');
+    perguntasEmbaralhadas = [...perguntas].sort(() => Math.random() - 0.5);
+    perguntaAtual = 0;
+    quiz.classList.add('active');
+    mostrarPergunta();
+  }
+
+  function mostrarPergunta() {
+    const atual = perguntasEmbaralhadas[perguntaAtual];
+    perguntaContainer.innerHTML = `
+      <div class="pergunta">
+        <p>${atual.pergunta}</p>
+        <div class="opcoes">
+          ${atual.opcoes.map((op, i) => `<button class="quiz-btn" onclick="verificarResposta(${i})">${op}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function verificarResposta(indiceEscolhido) {
+    const correta = perguntasEmbaralhadas[perguntaAtual].correta;
+    const botoes = document.querySelectorAll('.quiz-btn');
+
+    if (indiceEscolhido === correta) {
+      botoes[indiceEscolhido].classList.add('correct');
+      setTimeout(() => {
+        perguntaAtual++;
+        if (perguntaAtual < perguntasEmbaralhadas.length) {
+          mostrarPergunta();
+        } else {
+          quiz.classList.remove('active');
+          surpresaContainer.classList.add('active');
+        }
+      }, 500);
+    } else {
+      botoes[indiceEscolhido].classList.add('wrong');
+      setTimeout(() => {
+        quiz.classList.remove('active');
+        nameBox.classList.add('active');
+      }, 1000);
+    }
+  }
+
+  showSurpriseBtn.addEventListener('click', () => {
+    window.location.href = "surpresa.html";
+  });
+
+  function criarCoracoes() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDuration = 4 + Math.random() * 4 + 's';
+    heart.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+    document.getElementById('hearts').appendChild(heart);
+    setTimeout(() => heart.remove(), 10000);
+  }
+  setInterval(criarCoracoes, 400);
+</script>
+
+</body>
+</html>

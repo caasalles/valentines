@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surpresa - Música e Imagem</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: #fff;
+      color: black;
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+      padding: 20px;
+    }
+
+    #hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('data:image/svg+xml;utf8,<svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3 9.24 3 10.91 3.81 12 5.09 13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center center;
+      background-size: contain;
+      animation: fall 6s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10%); opacity: 0; }
+      100% { transform: translateY(110vh); opacity: 1; }
+    }
+
+    #win-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      -webkit-user-select: none;
+      user-select: none;
+      margin-bottom: 2rem;
+      color: #000000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      transform: translateY(-1rem);
+      width: 100%;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    #win-text.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    img {
+      max-width: 90vw;
+      max-height: 50vh;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #b788e5;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+      z-index: 1;
+      height: auto;
+      object-fit: contain;
+    }
+
+    img:hover {
+      transform: scale(1.05);
+    }
+
+    #heart-btn {
+      font-size: 30px;
+      cursor: pointer;
+      background: #fff;  
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      z-index: 1;
+      border: none;
+      outline: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    #heart-btn:hover {
+      background: #f9f9f9;
+      transform: scale(1.1);
+    }
+
+    button, img {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hearts"></div>
+
+  <div id="win-text">Você ganhou o
+porquinho do amor ❤️</div>
+
+  <img id="img" src="https://i.pinimg.com/1200x/a3/26/55/a326554023e5061bda28adc8ba4a5a30.jpg" alt="Imagem da surpresa" title="Clique para ouvir a música" />
+
+  <button id="heart-btn" title="Voltar para o quiz inicial">❤️</button>
+
+  <audio id="audio" src="floflo_WTjsjCUM.mp3" preload="auto"></audio>
+
+  <script>
+    const img = document.getElementById('img');
+    const audio = document.getElementById('audio');
+    const heartBtn = document.getElementById('heart-btn');
+    const winText = document.getElementById('win-text');
+
+    img.addEventListener('click', () => {
+      audio.play();
+      winText.classList.add('visible');
+    });
+
+    audio.addEventListener('ended', () => {
+      setTimeout(() => {
+        window.location.href = 'ultima.html';
+      }, 5000);
+    });
+
+    heartBtn.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    function criarCoracoes() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = 4 + Math.random() * 4 + 's';
+      heart.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+      document.getElementById('hearts').appendChild(heart);
+      setTimeout(() => heart.remove(), 10000);
+    }
+    setInterval(criarCoracoes, 400);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Última Etapa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"> 
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      color: #333;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 60px;
+    }
+
+    #hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: url('data:image/svg+xml;utf8,<svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3 9.24 3 10.91 3.81 12 5.09 13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center center;
+      background-size: contain;
+      animation: fall 6s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10%) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      text-align: center;
+      padding: 60px 20px 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.5rem;
+      color: #d4533f;
+      margin-bottom: 40px;
+    }
+
+    .carousel-wrapper {
+      width: 80%;
+      max-width: 600px;
+      height: 400px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .carousel {
+      display: flex;
+      animation: slide 18s linear infinite;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      16.6% { transform: translateX(-100%); }
+      33.2% { transform: translateX(-200%); }
+      49.8% { transform: translateX(-300%); }
+      66.4% { transform: translateX(-400%); }
+      83% { transform: translateX(-500%); }
+      100% { transform: translateX(-600%); }
+    }
+
+    .message {
+      margin: 30px 0;
+      font-size: 1.1rem;
+      color: #444;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .contador {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 0.9rem;
+      margin-top: 20px;
+      user-select: none;
+    }
+
+    .tempo-linha {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .tempo-box {
+      background-color: rgba(200, 0, 0, 0.05);
+      padding: 10px 14px;
+      border-radius: 8px;
+      flex: 1 1 0;
+      text-align: center;
+      min-width: 70px;
+      box-sizing: border-box;
+    }
+
+    .tempo-box span {
+      display: block;
+    }
+
+    .tempo-box .numero {
+      font-size: 1.3rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .heart-button {
+      margin-top: 30px;
+      font-size: 2rem;
+      color: #e53935;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: transform 0.2s ease;
+    }
+
+    .heart-button:hover {
+      transform: scale(1.2);
+    }
+
+    footer.audio-player {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 12px 20px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 10;
+      user-select: none;
+    }
+
+    footer.audio-player button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer.audio-player button:hover {
+      transform: scale(1.1);
+    }
+
+    footer.audio-player svg {
+      stroke: #d4533f;
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    footer.audio-player input[type="range"] {
+      width: 100px;
+      accent-color: #d4533f;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+      border-radius: 4px;
+      height: 4px;
+      background: #f0d7d1;
+      -webkit-appearance: none;
+    }
+
+    footer.audio-player input[type="range"]:hover {
+      opacity: 1;
+    }
+
+    footer.audio-player input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #d4533f;
+      cursor: pointer;
+      border-radius: 50%;
+      border: none;
+      margin-top: -6px;
+      transition: background-color 0.2s ease;
+    }
+
+    footer.audio-player input[type="range"]::-webkit-slider-thumb:hover {
+      background: #b63e2c;
+    }
+
+    footer.audio-player input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: #d4533f;
+      cursor: pointer;
+      border-radius: 50%;
+      border: none;
+      transition: background-color 0.2s ease;
+    }
+
+    footer.audio-player input[type="range"]::-moz-range-thumb:hover {
+      background: #b63e2c;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="hearts"></div>
+
+<div class="container">
+  <h1>Carolina e Bruna</h1>
+
+  <div class="carousel-wrapper">
+    <div class="carousel" id="carousel">
+      <img src="imagens/foto1.jpeg" alt="foto 1">
+      <img src="imagens/foto2.jpeg" alt="foto 2">
+      <img src="imagens/foto3.jpeg" alt="foto 3">
+      <img src="imagens/foto4.jpeg" alt="foto 4">
+      <img src="imagens/foto5.jpeg" alt="foto 5">
+      <img src="imagens/foto6.jpeg" alt="foto 6">
+    </div>
+  </div>
+
+  <div class="message">
+    Que cada dia ao seu lado seja repleto de amor, sorrisos e momentos inesquecíveis. Você é meu presente mais bonito.
+  </div>
+
+  <div class="contador" id="contador">
+    <div class="tempo-linha" id="linha1"></div>
+    <div class="tempo-linha" id="linha2"></div>
+  </div>
+
+  <button class="heart-button" onclick="window.location.href='index.html'">❤️</button>
+</div>
+
+<footer class="audio-player">
+  <audio id="audio-player" src="musicas/Delacruz - Sunshine.mp3"></audio>
+
+  <button id="play-pause-btn" aria-label="Play/Pause">
+    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#d4533f" viewBox="0 0 24 24" width="24" height="24">
+      <polygon points="5 3 19 12 5 21"></polygon>
+    </svg>
+    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#d4533f" viewBox="0 0 24 24" width="24" height="24" style="display:none;">
+      <rect x="6" y="4" width="4" height="16"></rect>
+      <rect x="14" y="4" width="4" height="16"></rect>
+    </svg>
+  </button>
+
+  <button id="next-btn" aria-label="Próxima">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#d4533f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" width="24" height="24">
+      <polygon points="5 4 15 12 5 20 5 4"></polygon>
+      <line x1="19" y1="5" x2="19" y2="19"></line>
+    </svg>
+  </button>
+
+  <input type="range" id="volume-control" min="0" max="1" step="0.01" aria-label="Volume">
+</footer>
+
+<script>
+  function criarCoracoes() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDuration = 4 + Math.random() * 4 + 's';
+    heart.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+    document.getElementById('hearts').appendChild(heart);
+    setTimeout(() => heart.remove(), 10000);
+  }
+  setInterval(criarCoracoes, 400);
+
+  function atualizarContador() {
+    const dataInicio = new Date("2024-11-11T00:00:00");
+    const agora = new Date();
+    let diff = agora - dataInicio;
+
+    const anos = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+    diff -= anos * 1000 * 60 * 60 * 24 * 365.25;
+
+    const meses = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.4375));
+    diff -= meses * 1000 * 60 * 60 * 24 * 30.4375;
+
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    diff -= dias * 1000 * 60 * 60 * 24;
+
+    const horas = Math.floor(diff / (1000 * 60 * 60));
+    diff -= horas * 1000 * 60 * 60;
+
+    const minutos = Math.floor(diff / (1000 * 60));
+    diff -= minutos * 1000 * 60;
+
+    const segundos = Math.floor(diff / 1000);
+
+    document.getElementById('linha1').innerHTML = `
+      <div class="tempo-box"><span class="numero">${anos}</span><span>anos</span></div>
+      <div class="tempo-box"><span class="numero">${meses}</span><span>meses</span></div>
+      <div class="tempo-box"><span class="numero">${dias}</span><span>dias</span></div>
+    `;
+
+    document.getElementById('linha2').innerHTML = `
+      <div class="tempo-box"><span class="numero">${horas}</span><span>horas</span></div>
+      <div class="tempo-box"><span class="numero">${minutos}</span><span>minutos</span></div>
+      <div class="tempo-box"><span class="numero">${segundos}</span><span>segundos</span></div>
+    `;
+  }
+
+  setInterval(atualizarContador, 1000);
+  atualizarContador();
+
+  // Player de áudio
+  const audio = document.getElementById('audio-player');
+  const playBtn = document.getElementById('play-pause-btn');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const volumeControl = document.getElementById('volume-control');
+
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+    } else {
+      audio.pause();
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+    }
+  });
+
+  volumeControl.value = audio.volume;
+  volumeControl.addEventListener('input', () => {
+    audio.volume = volumeControl.value;
+  });
+
+  audio.addEventListener('ended', () => {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
